@@ -1,0 +1,34 @@
+{
+  "name": "crane-stats",
+  "version": "1.0.0",
+  "description": "Data-repo to hold all aggregated statistics",
+  "main": "index.js",
+  "engines": {
+    "node": ">= 18.x"
+  },
+  "scripts": {
+    "start": "node --no-warnings --loader ts-node/esm src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flaming-codes/crane-stats.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/flaming-codes/crane-stats/issues"
+  },
+  "homepage": "https://github.com/flaming-codes/crane-stats#readme",
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.4.1",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "date-fns": "^2.29.3",
+    "dotenv": "^16.0.3",
+    "octokit": "^2.0.10"
+  }
+}
