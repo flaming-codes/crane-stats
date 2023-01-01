@@ -1,8 +1,8 @@
-import fs from "node:fs";
-import path from "node:path";
-import { Provider } from "../../provider";
-import { DataRecord } from "./types";
-import { joinDataPath, writeDataRecord } from "./utils";
+import fs from 'node:fs';
+import path from 'node:path';
+import { Provider } from '../../provider';
+import { DataRecord } from './types';
+import { joinDataPath, writeDataRecord } from './utils';
 
 /**
  * Adapter to interact with the data-directory.
@@ -19,7 +19,7 @@ export class DataAdapter<T> {
     this.provider = provider;
 
     this.baseDir = joinDataPath(provider.name);
-    this.snapshotsDir = joinDataPath(provider.name, "snapshots");
+    this.snapshotsDir = joinDataPath(provider.name, 'snapshots');
   }
 
   /**
@@ -51,7 +51,7 @@ export class DataAdapter<T> {
 
     writeDataRecord(filepath, {
       date: time.toISOString(),
-      data: JSON.stringify(res),
+      data: JSON.stringify(res)
     });
   }
 }

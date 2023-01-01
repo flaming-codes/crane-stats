@@ -1,4 +1,4 @@
-import "dotenv/config";
+import 'dotenv/config';
 
 async function run() {
   /*
@@ -10,7 +10,7 @@ async function run() {
 
   const now = new Date();
 
-  const providers = [import("./providers/github")];
+  const providers = [import('./providers/github')];
   for await (const { adapter } of providers) {
     await adapter.saveSnapshot(now);
   }

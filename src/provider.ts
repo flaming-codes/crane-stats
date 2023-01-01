@@ -1,4 +1,4 @@
-import { DataAdapter } from "./adapters/data";
+import { DataAdapter } from './adapters/data';
 
 export class Provider {
   name: string;

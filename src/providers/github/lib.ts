@@ -1,7 +1,7 @@
-import { Octokit } from "octokit";
+import { Octokit } from 'octokit';
 
 const sdk = new Octokit({
-  auth: process.env.GITHUB_KEY,
+  auth: process.env.GITHUB_KEY
 });
 
 export async function getReposByStars(params?: { pushed?: string }) {
@@ -9,9 +9,9 @@ export async function getReposByStars(params?: { pushed?: string }) {
 
   const { data } = await sdk.rest.search.repos({
     q: `language:R`,
-    sort: "stars",
-    order: "desc",
-    per_page: 50,
+    sort: 'stars',
+    order: 'desc',
+    per_page: 50
   });
 
   return {
@@ -26,8 +26,8 @@ export async function getReposByStars(params?: { pushed?: string }) {
       watchers: item.watchers,
       owner: {
         login: item.owner?.login,
-        avatar_url: item.owner?.avatar_url,
-      },
-    })),
+        avatar_url: item.owner?.avatar_url
+      }
+    }))
   };
 }
