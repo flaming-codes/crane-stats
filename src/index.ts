@@ -1,14 +1,20 @@
 import "dotenv/config";
 
-import { roundToNearestMinutes } from "date-fns";
-import { adapter as octoAdapter } from "./providers/github";
+async function run() {
+  /*
+  const now = roundToNearestMinutes(new Date(), {
+    nearestTo: 15,
+    roundingMethod: "floor",
+  });
+  */
 
-const now = roundToNearestMinutes(new Date(), {
-  nearestTo: 15,
-  roundingMethod: "floor",
-});
+  const now = new Date();
 
-async function run() {}
+  const providers = [import("./providers/github")];
+  for await (const { adapter } of providers) {
+    await adapter.saveSnapshot(now);
+  }
+}
 
 run().then(() => {
   process.exit(0);

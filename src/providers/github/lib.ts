@@ -1,14 +1,10 @@
 import { Octokit } from "octokit";
-import fs from "node:fs";
-import path from "node:path";
-import { Provider } from "../provider";
-import { DataAdapter } from "../adapter";
 
 const sdk = new Octokit({
   auth: process.env.GITHUB_KEY,
 });
 
-async function getReposByStars(params?: { pushed?: string }) {
+export async function getReposByStars(params?: { pushed?: string }) {
   // const { pushed = format(subDays(new Date(), 1), 'yyyy-MM-dd') } = params || {};
 
   const { data } = await sdk.rest.search.repos({
@@ -35,7 +31,3 @@ async function getReposByStars(params?: { pushed?: string }) {
     })),
   };
 }
-
-const provider = new Provider({ name: "github" });
-
-export const adapter = new DataAdapter({ provider });
