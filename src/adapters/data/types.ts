@@ -1,6 +1,6 @@
-export type DataRecord<T> = {
+export type DataRecord<D> = {
   date: string;
-  data: T;
+  data: D;
 };
 
 export enum AggregationRange {
@@ -10,4 +10,4 @@ export enum AggregationRange {
   'month' = 'month'
 }
 
-export type Aggregator<T> = (latest: T, past: T) => T;
+export type Aggregator<D, Dt> = (latest: D, past: D) => Dt;

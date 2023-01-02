@@ -14,7 +14,7 @@ async function run() {
     const ranges = Object.values(AggregationRange);
 
     await Promise.all(
-      ranges.map((range) => adapter.saveRangeValue({ latestRecord: record, date: now, range }))
+      ranges.map((range) => adapter.saveAggregation({ latestRecord: record, date: now, range }))
     );
   }
 }

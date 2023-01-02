@@ -9,15 +9,20 @@ import { joinDataPath, mapAggregationRangeToDate, writeDataRecord } from './util
  *
  * @param provider The name of the provider to use.
  */
-export class DataAdapter<T> {
+export class DataAdapter<
+  // Original data type.
+  D,
+  // Transformed data type for storage.
+  Dt
+> {
   provider: Provider;
   private baseDir: string;
   private snapshotsDir: string;
   private aggregatesDir: string;
   /** Get the aggregated entity. */
-  private aggregator: Aggregator<T>;
+  private aggregator: Aggregator<D, Dt>;
 
-  constructor(props: { provider: Provider; aggregator: Aggregator<T> }) {
+  constructor(props: { provider: Provider; aggregator: Aggregator<D, Dt> }) {
     const { provider } = props;
     this.provider = provider;
 
@@ -44,7 +49,7 @@ export class DataAdapter<T> {
    * @param time
    * @returns
    */
-  async composeSnapshot(params: { date: Date }): Promise<T> {
+  async composeSnapshot(params: { date: Date }): Promise<D> {
     throw new Error('Not implemented: composeSnapshot');
   }
 
@@ -53,7 +58,7 @@ export class DataAdapter<T> {
    *
    * @param time
    */
-  async saveSnapshot(params: { date: Date }): Promise<T> {
+  async saveSnapshot(params: { date: Date }): Promise<D> {
     const { date } = params;
 
     const res = await this.composeSnapshot({ date });
@@ -80,11 +85,11 @@ export class DataAdapter<T> {
    * @param params
    * @returns
    */
-  async saveRangeValue(params: {
-    latestRecord: T;
+  async saveAggregation(params: {
+    latestRecord: D;
     date: Date;
     range: AggregationRange;
-  }): Promise<T | void> {
+  }): Promise<Dt | void> {
     const { latestRecord, date, range } = params;
     const rangeDir = path.join(this.aggregatesDir, range);
 
@@ -110,7 +115,7 @@ export class DataAdapter<T> {
 
     const snapshotDir = path.join(this.snapshotsDir, this.composeFilename(pastIsoDate));
     const file = fs.readFileSync(snapshotDir, { encoding: 'utf-8' });
-    const pastRecord = JSON.parse(file) as DataRecord<T>;
+    const pastRecord = JSON.parse(file) as DataRecord<D>;
 
     const next = this.aggregator(latestRecord, pastRecord.data);
     const aggregatedRecordDir = path.join(

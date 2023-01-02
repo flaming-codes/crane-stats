@@ -5,7 +5,14 @@ import { getReposByStars } from './lib';
 
 type DataItem = Awaited<ReturnType<typeof getReposByStars>>['items'][number];
 
-class GithubDataAdapter extends DataAdapter<DataItem[]> {
+type TrendDataItem = {
+  original: DataItem;
+  trend: {
+    stargazers_count: number;
+  };
+};
+
+class GithubDataAdapter extends DataAdapter<DataItem[], TrendDataItem[]> {
   async composeSnapshot() {
     const { items } = await getReposByStars();
     return items;
@@ -14,19 +21,26 @@ class GithubDataAdapter extends DataAdapter<DataItem[]> {
 
 const provider = new Provider({ name: 'github' });
 
-const aggregator: Aggregator<DataItem[]> = (latest, past) => {
-  const next: DataItem[] = [];
+const aggregator: Aggregator<DataItem[], TrendDataItem[]> = (latest, past) => {
+  const next: TrendDataItem[] = [];
 
   for (const item of latest) {
     const existing = past.find((i) => i.id === item.id);
 
     if (existing) {
       next.push({
-        ...item,
-        stargazers_count: item.stargazers_count - existing.stargazers_count
+        original: item,
+        trend: {
+          stargazers_count: item.stargazers_count - existing.stargazers_count
+        }
       });
     } else {
-      next.push(item);
+      next.push({
+        original: item,
+        trend: {
+          stargazers_count: item.stargazers_count
+        }
+      });
     }
   }
 
