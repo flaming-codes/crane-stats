@@ -13,15 +13,17 @@ export function writeDataRecord<T>(filepath: string, record: DataRecord<T>) {
   fs.writeFileSync(filepath, JSON.stringify(record), { encoding: 'utf-8' });
 }
 
-export function mapAggregationRangeToDate(range: AggregationRange, now: Date): Date {
+export function mapAggregationRangeToDate(range: AggregationRange, date: Date): Date {
   switch (range) {
-    case '24h':
-      return subDays(now, 1);
-    case 'week':
-      return subWeeks(now, 1);
-    case '2-weeks':
-      return subWeeks(now, 2);
-    case 'month':
-      return subMonths(now, 1);
+    case AggregationRange['24h']:
+      return subDays(date, 1);
+    case AggregationRange.week:
+      return subWeeks(date, 1);
+    case AggregationRange['2-weeks']:
+      return subWeeks(date, 2);
+    case AggregationRange.month:
+      return subMonths(date, 1);
+    default:
+      throw new Error(`Invalid range: ${range}`);
   }
 }

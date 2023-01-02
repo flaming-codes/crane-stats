@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { Provider } from '../../provider';
-import { AggregationRange, DataRecord } from './types';
+import { AggregationRange, Aggregator, DataRecord } from './types';
 import { joinDataPath, mapAggregationRangeToDate, writeDataRecord } from './utils';
 
 /**
@@ -14,8 +14,10 @@ export class DataAdapter<T> {
   private baseDir: string;
   private snapshotsDir: string;
   private aggregatesDir: string;
+  /** Get the aggregated entity. */
+  private aggregator: Aggregator<T>;
 
-  constructor(props: { provider: Provider }) {
+  constructor(props: { provider: Provider; aggregator: Aggregator<T> }) {
     const { provider } = props;
     this.provider = provider;
 
@@ -32,13 +34,17 @@ export class DataAdapter<T> {
     return new Date(date);
   }
 
+  private composeFilename(date: Date | string): string {
+    return typeof date === 'string' ? `${date}.json` : `${this.stringifyDate(date)}.json`;
+  }
+
   /**
    * Create a single snapshot for the provider.
    *
    * @param time
    * @returns
    */
-  async composeSnapshot(time: Date): Promise<T> {
+  async composeSnapshot(params: { date: Date }): Promise<T> {
     throw new Error('Not implemented: composeSnapshot');
   }
 
@@ -47,11 +53,11 @@ export class DataAdapter<T> {
    *
    * @param time
    */
-  async saveSnapshot(params: { time: Date }): Promise<void> {
-    const { time } = params;
+  async saveSnapshot(params: { date: Date }): Promise<T> {
+    const { date } = params;
 
-    const res = await this.composeSnapshot(time);
-    const filename = `${this.stringifyDate(time)}.json`;
+    const res = await this.composeSnapshot({ date });
+    const filename = this.composeFilename(date);
     const filepath = path.join(this.snapshotsDir, filename);
 
     if (!fs.existsSync(this.baseDir)) {
@@ -62,11 +68,61 @@ export class DataAdapter<T> {
     }
 
     writeDataRecord(filepath, {
-      date: time.toISOString(),
+      date: this.stringifyDate(date),
       data: JSON.stringify(res)
     });
+
+    return res;
   }
 
+  /**
+   *
+   * @param params
+   * @returns
+   */
+  async saveRangeValue(params: {
+    latestRecord: T;
+    date: Date;
+    range: AggregationRange;
+  }): Promise<T | void> {
+    const { latestRecord, date, range } = params;
+    const rangeDir = path.join(this.aggregatesDir, range);
+
+    if (!fs.existsSync(this.baseDir)) {
+      fs.mkdirSync(this.baseDir);
+    }
+    if (!fs.existsSync(this.aggregatesDir)) {
+      fs.mkdirSync(this.aggregatesDir);
+    }
+    if (!fs.existsSync(rangeDir)) {
+      fs.mkdirSync(rangeDir);
+    }
+
+    const pastIsoDate = this.stringifyDate(mapAggregationRangeToDate(range, date));
+    const files = fs.readdirSync(this.snapshotsDir);
+
+    //  Check if there is a snapshot for the given range.
+    if (!files.includes(pastIsoDate)) {
+      console.warn(`No snapshot for ${pastIsoDate} in range ${range} found.`);
+
+      return;
+    }
+
+    const snapshotDir = path.join(this.snapshotsDir, this.composeFilename(pastIsoDate));
+    const file = fs.readFileSync(snapshotDir, { encoding: 'utf-8' });
+    const pastRecord = JSON.parse(file) as DataRecord<T>;
+
+    const next = this.aggregator(latestRecord, pastRecord.data);
+    const aggregatedRecordDir = path.join(
+      this.aggregatesDir,
+      this.composeFilename(AggregationRange['24h'])
+    );
+    fs.writeFileSync(aggregatedRecordDir, JSON.stringify(next), { encoding: 'utf-8' });
+
+    return next;
+  }
+
+  /*
   async saveAggregation(params: { time: Date; range: AggregationRange }): Promise<void> {
     const { time, range } = params;
     const rangeDir = path.join(this.aggregatesDir, range);
@@ -92,4 +148,5 @@ export class DataAdapter<T> {
         return JSON.parse(data);
       });
   }
+  */
 }
