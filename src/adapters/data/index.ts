@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { Provider } from '../../provider';
-import { AggregationRange, Aggregator, DataRecord } from './types';
+import { AggregationRange, Aggregator } from './types';
 import { joinDataPath, mapAggregationRangeToDate, readDataRecord, writeDataRecord } from './utils';
 
 /**
@@ -32,7 +32,7 @@ export class DataAdapter<
 
     this.baseDir = joinDataPath(provider.name);
     this.snapshotsDir = joinDataPath(provider.name, 'snapshots');
-    this.aggregatesDir = joinDataPath(provider.name, 'aggregates');
+    this.aggregatesDir = joinDataPath(provider.name, 'trends');
   }
 
   private stringifyDate(date: Date): string {
@@ -123,32 +123,4 @@ export class DataAdapter<
 
     return next;
   }
-
-  /*
-  async saveAggregation(params: { time: Date; range: AggregationRange }): Promise<void> {
-    const { time, range } = params;
-    const rangeDir = path.join(this.aggregatesDir, range);
-
-    if (!fs.existsSync(this.baseDir)) {
-      fs.mkdirSync(this.baseDir);
-    }
-    if (!fs.existsSync(this.aggregatesDir)) {
-      fs.mkdirSync(this.aggregatesDir);
-    }
-    if (!fs.existsSync(rangeDir)) {
-      fs.mkdirSync(rangeDir);
-    }
-
-    const lowerBound = this.stringifyDate(mapAggregationRangeToDate(range, time));
-    const files = fs.readdirSync(this.snapshotsDir);
-
-    const records: DataRecord<T>[] = files
-      .filter((file) => file.startsWith(lowerBound))
-      .map((file) => {
-        const filepath = path.join(this.snapshotsDir, file);
-        const data = fs.readFileSync(filepath, { encoding: 'utf-8' });
-        return JSON.parse(data);
-      });
-  }
-  */
 }

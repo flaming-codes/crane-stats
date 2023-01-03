@@ -7,7 +7,9 @@
     "node": ">= 18.x"
   },
   "scripts": {
-    "start": "node --no-warnings --loader ts-node/esm src/index.ts"
+    "renovate": "node --no-warnings --loader ts-node/esm src",
+    "server": "node --no-warnings --loader ts-node/esm src/server",
+    "dev:server": "node --watch --no-warnings --loader ts-node/esm src/server"
   },
   "repository": {
     "type": "git",
@@ -22,6 +24,7 @@
   "homepage": "https://github.com/flaming-codes/crane-stats#readme",
   "devDependencies": {
     "@types/node": "^18.11.18",
+    "fastify": "^4.11.0",
     "prettier": "^2.8.1",
     "ts-node": "^10.9.1",
     "tslib": "^2.4.1",

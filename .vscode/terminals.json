@@ -1,0 +1,15 @@
+{
+  "autorun": true,
+  "autokill": true,
+  "restore": false,
+  "terminals": [
+    {
+      "name": "server",
+      "commands": [
+        "nvm use"
+      ],
+      "open": true,
+      "focus": true
+    }
+  ]
+}
