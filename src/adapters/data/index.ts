@@ -95,7 +95,6 @@ export class DataAdapter<
     range: AggregationRange;
   }): Promise<Dt | void> {
     const { latestRecord, date, range } = params;
-    const rangeDir = path.join(this.aggregatesDir, range);
 
     if (!fs.existsSync(this.baseDir)) {
       fs.mkdirSync(this.baseDir);
