@@ -1,6 +1,6 @@
 declare namespace NodeJS {
   interface Global {
-    GITHUB_KEY: string;
+    GH_API_KEY: string;
     NODE_ENV: 'development' | 'production';
   }
 }

@@ -1,7 +1,7 @@
 import { Octokit } from 'octokit';
 
 const sdk = new Octokit({
-  auth: process.env.GITHUB_KEY
+  auth: process.env.GH_API_KEY
 });
 
 export async function getReposByStars(params?: { pushed?: string }) {
