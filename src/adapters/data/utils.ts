@@ -1,5 +1,6 @@
 import path from 'node:path';
 import fs from 'node:fs';
+import os from 'node:os';
 import { AggregationRange, DataRecord } from './types';
 import { subHours, subMonths, subWeeks } from 'date-fns';
 import { gzip } from 'compressing';
@@ -11,21 +12,14 @@ export function joinDataPath(...rest: string[]) {
 }
 
 export async function readDataRecord<T>(filepath: string): Promise<DataRecord<T>> {
-  console.log('filepath', filepath);
+  // The 'gzip.uncompress' op expects a file, so we need to write the data to a temp file.
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'crane-stats'));
+  const tempFile = path.join(tmpDir, 'temp.json');
 
-  const targetFile = filepath.split('/').slice(-1)[0];
-  const targetDir = path.join(filepath.split('/').slice(0, -1).join('/'), 'temp');
+  await gzip.uncompress(filepath, tempFile);
 
-  if (!fs.existsSync(targetDir)) {
-    fs.mkdirSync(targetDir);
-  }
-  await gzip.uncompress(filepath, targetDir);
-
-  console.log('uncompressed', targetDir);
-
-  const uncompressedFile = fs.readFileSync(path.join(targetDir, targetFile), 'utf-8');
-
-  console.log('buffer');
+  const uncompressedFile = fs.readFileSync(tempFile, 'utf-8');
+  fs.unlinkSync(tempFile);
 
   return JSON.parse(uncompressedFile);
 }
