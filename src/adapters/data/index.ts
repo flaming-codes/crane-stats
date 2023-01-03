@@ -107,7 +107,7 @@ export class DataAdapter<
     const files = fs.readdirSync(this.snapshotsDir);
 
     //  Check if there is a snapshot for the given range.
-    if (!files.includes(pastIsoDate)) {
+    if (!files.includes(pastIsoDate + '.gzip')) {
       console.warn(`No snapshot for ${pastIsoDate} in range ${range} found.`);
 
       return;
