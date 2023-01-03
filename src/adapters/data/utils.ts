@@ -1,7 +1,6 @@
 import path from 'node:path';
-import fs from 'node:fs';
 import { AggregationRange, DataRecord } from './types';
-import { subDays, subMonths, subWeeks } from 'date-fns';
+import { subHours, subMonths, subWeeks } from 'date-fns';
 import { gzip } from 'compressing';
 
 export const dataPath = path.join(process.cwd(), 'data');
@@ -23,17 +22,21 @@ export async function writeDataRecord<T>(filepath: string, record: DataRecord<T>
 
 export function mapAggregationRangeToDate(range: AggregationRange, date: Date): Date {
   switch (range) {
+    case AggregationRange['6h']:
+      return subHours(date, 6);
+    case AggregationRange['12h']:
+      return subHours(date, 12);
     case AggregationRange['24h']:
-      return subDays(date, 1);
+      return subHours(date, 24);
     case AggregationRange['48h']:
-      return subDays(date, 2);
+      return subHours(date, 48);
     case AggregationRange['72h']:
-      return subDays(date, 3);
-    case AggregationRange.week:
+      return subHours(date, 72);
+    case AggregationRange['1-week']:
       return subWeeks(date, 1);
     case AggregationRange['2-weeks']:
       return subWeeks(date, 2);
-    case AggregationRange.month:
+    case AggregationRange['1-month']:
       return subMonths(date, 1);
     default:
       throw new Error(`Invalid range: ${range}`);
