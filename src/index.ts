@@ -1,12 +1,14 @@
-import { roundToNearestMinutes } from 'date-fns';
+import { roundToNearestMinutes, parseISO } from 'date-fns';
 import 'dotenv/config';
 import { AggregationRange } from './adapters/data/types';
 
 async function run() {
-  const now = roundToNearestMinutes(new Date(), {
+  let now = roundToNearestMinutes(new Date(), {
     nearestTo: 15,
     roundingMethod: 'floor'
   });
+
+  now = parseISO('2023-01-03T22:00:00.000Z');
 
   const providers = [import('./providers/github')];
 

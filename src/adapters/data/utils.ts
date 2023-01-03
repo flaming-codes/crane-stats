@@ -1,4 +1,5 @@
 import path from 'node:path';
+import fs from 'node:fs';
 import { AggregationRange, DataRecord } from './types';
 import { subHours, subMonths, subWeeks } from 'date-fns';
 import { gzip } from 'compressing';
@@ -10,9 +11,23 @@ export function joinDataPath(...rest: string[]) {
 }
 
 export async function readDataRecord<T>(filepath: string): Promise<DataRecord<T>> {
-  let buffer = Buffer.alloc(0);
-  await gzip.uncompress(buffer, filepath);
-  return JSON.parse(buffer.toString('utf-8'));
+  console.log('filepath', filepath);
+
+  const targetFile = filepath.split('/').slice(-1)[0];
+  const targetDir = path.join(filepath.split('/').slice(0, -1).join('/'), 'temp');
+
+  if (!fs.existsSync(targetDir)) {
+    fs.mkdirSync(targetDir);
+  }
+  await gzip.uncompress(filepath, targetDir);
+
+  console.log('uncompressed', targetDir);
+
+  const uncompressedFile = fs.readFileSync(path.join(targetDir, targetFile), 'utf-8');
+
+  console.log('buffer');
+
+  return JSON.parse(uncompressedFile);
 }
 
 export async function writeDataRecord<T>(filepath: string, record: DataRecord<T>): Promise<void> {
