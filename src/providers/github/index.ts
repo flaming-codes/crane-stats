@@ -44,6 +44,8 @@ const aggregator: Aggregator<DataItem[], TrendDataItem[]> = (latest, past) => {
     }
   }
 
+  next.sort((a, b) => b.trend.stargazers_count - a.trend.stargazers_count);
+
   return next;
 };
 

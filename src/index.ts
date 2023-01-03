@@ -9,6 +9,7 @@ async function run() {
   });
 
   const providers = [import('./providers/github')];
+
   for await (const { adapter } of providers) {
     const record = await adapter.saveSnapshot({ date: now });
     const ranges = Object.values(AggregationRange);

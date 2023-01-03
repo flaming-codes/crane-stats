@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Provider } from '../../provider';
 import { AggregationRange, Aggregator, DataRecord } from './types';
-import { joinDataPath, mapAggregationRangeToDate, writeDataRecord } from './utils';
+import { joinDataPath, mapAggregationRangeToDate, readDataRecord, writeDataRecord } from './utils';
 
 /**
  * Adapter to interact with the data-directory.
@@ -16,15 +16,19 @@ export class DataAdapter<
   Dt
 > {
   provider: Provider;
+  private version: number = 1;
   private baseDir: string;
   private snapshotsDir: string;
   private aggregatesDir: string;
   /** Get the aggregated entity. */
   private aggregator: Aggregator<D, Dt>;
 
-  constructor(props: { provider: Provider; aggregator: Aggregator<D, Dt> }) {
-    const { provider } = props;
+  constructor(props: { provider: Provider; aggregator: Aggregator<D, Dt>; version?: number }) {
+    const { provider, version, aggregator } = props;
+
     this.provider = provider;
+    this.version = version ?? this.version;
+    this.aggregator = aggregator;
 
     this.baseDir = joinDataPath(provider.name);
     this.snapshotsDir = joinDataPath(provider.name, 'snapshots');
@@ -39,8 +43,8 @@ export class DataAdapter<
     return new Date(date);
   }
 
-  private composeFilename(date: Date | string): string {
-    return typeof date === 'string' ? `${date}.json` : `${this.stringifyDate(date)}.json`;
+  private composeFilename(date: Date | string, suffix: 'json' | 'gzip'): string {
+    return typeof date === 'string' ? `${date}.${suffix}` : `${this.stringifyDate(date)}.${suffix}`;
   }
 
   /**
@@ -62,7 +66,7 @@ export class DataAdapter<
     const { date } = params;
 
     const res = await this.composeSnapshot({ date });
-    const filename = this.composeFilename(date);
+    const filename = this.composeFilename(date, 'gzip');
     const filepath = path.join(this.snapshotsDir, filename);
 
     if (!fs.existsSync(this.baseDir)) {
@@ -72,7 +76,7 @@ export class DataAdapter<
       fs.mkdirSync(this.snapshotsDir);
     }
 
-    writeDataRecord(filepath, {
+    await writeDataRecord(filepath, {
       date: this.stringifyDate(date),
       data: JSON.stringify(res)
     });
@@ -99,9 +103,6 @@ export class DataAdapter<
     if (!fs.existsSync(this.aggregatesDir)) {
       fs.mkdirSync(this.aggregatesDir);
     }
-    if (!fs.existsSync(rangeDir)) {
-      fs.mkdirSync(rangeDir);
-    }
 
     const pastIsoDate = this.stringifyDate(mapAggregationRangeToDate(range, date));
     const files = fs.readdirSync(this.snapshotsDir);
@@ -113,15 +114,11 @@ export class DataAdapter<
       return;
     }
 
-    const snapshotDir = path.join(this.snapshotsDir, this.composeFilename(pastIsoDate));
-    const file = fs.readFileSync(snapshotDir, { encoding: 'utf-8' });
-    const pastRecord = JSON.parse(file) as DataRecord<D>;
+    const snapshotDir = path.join(this.snapshotsDir, this.composeFilename(pastIsoDate, 'gzip'));
+    const pastRecord = await readDataRecord<D>(snapshotDir);
 
     const next = this.aggregator(latestRecord, pastRecord.data);
-    const aggregatedRecordDir = path.join(
-      this.aggregatesDir,
-      this.composeFilename(AggregationRange['24h'])
-    );
+    const aggregatedRecordDir = path.join(this.aggregatesDir, this.composeFilename(range, 'json'));
     fs.writeFileSync(aggregatedRecordDir, JSON.stringify(next), { encoding: 'utf-8' });
 
     return next;

@@ -2,6 +2,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { AggregationRange, DataRecord } from './types';
 import { subDays, subMonths, subWeeks } from 'date-fns';
+import { gzip } from 'compressing';
 
 export const dataPath = path.join(process.cwd(), 'data');
 
@@ -9,8 +10,15 @@ export function joinDataPath(...rest: string[]) {
   return path.join(dataPath, ...rest);
 }
 
-export function writeDataRecord<T>(filepath: string, record: DataRecord<T>) {
-  fs.writeFileSync(filepath, JSON.stringify(record), { encoding: 'utf-8' });
+export async function readDataRecord<T>(filepath: string): Promise<DataRecord<T>> {
+  let buffer = Buffer.alloc(0);
+  await gzip.uncompress(buffer, filepath);
+  return JSON.parse(buffer.toString('utf-8'));
+}
+
+export async function writeDataRecord<T>(filepath: string, record: DataRecord<T>): Promise<void> {
+  const buffer = Buffer.from(JSON.stringify(record), 'utf-8');
+  await gzip.compressFile(buffer, filepath);
 }
 
 export function mapAggregationRangeToDate(range: AggregationRange, date: Date): Date {
