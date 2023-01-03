@@ -25,6 +25,10 @@ export function mapAggregationRangeToDate(range: AggregationRange, date: Date): 
   switch (range) {
     case AggregationRange['24h']:
       return subDays(date, 1);
+    case AggregationRange['48h']:
+      return subDays(date, 2);
+    case AggregationRange['72h']:
+      return subDays(date, 3);
     case AggregationRange.week:
       return subWeeks(date, 1);
     case AggregationRange['2-weeks']:

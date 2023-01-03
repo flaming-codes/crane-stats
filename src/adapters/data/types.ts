@@ -5,6 +5,8 @@ export type DataRecord<D> = {
 
 export enum AggregationRange {
   '24h' = '24h',
+  '48h' = '48h',
+  '72h' = '72h',
   'week' = 'week',
   '2-weeks' = '2-weeks',
   'month' = 'month'
