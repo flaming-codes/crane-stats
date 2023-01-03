@@ -103,17 +103,16 @@ export class DataAdapter<
       fs.mkdirSync(this.aggregatesDir);
     }
 
-    const pastIsoDate = this.stringifyDate(mapAggregationRangeToDate(range, date));
+    const snapshotFile = this.composeFilename(mapAggregationRangeToDate(range, date), 'gzip');
     const files = fs.readdirSync(this.snapshotsDir);
 
     //  Check if there is a snapshot for the given range.
-    if (!files.includes(pastIsoDate + '.gzip')) {
-      console.warn(`No snapshot for ${pastIsoDate} in range ${range} found.`);
-
+    if (!files.includes(snapshotFile)) {
+      console.warn(`No snapshot for ${snapshotFile} in range ${range} found.`);
       return;
     }
 
-    const snapshotDir = path.join(this.snapshotsDir, this.composeFilename(pastIsoDate, 'gzip'));
+    const snapshotDir = path.join(this.snapshotsDir, snapshotFile);
     const pastRecord = await readDataRecord<D>(snapshotDir);
 
     const next = this.aggregator(latestRecord, pastRecord.data);
