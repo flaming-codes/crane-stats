@@ -78,7 +78,7 @@ export class DataAdapter<
 
     await writeDataRecord(filepath, {
       date: this.stringifyDate(date),
-      data: JSON.stringify(res)
+      data: res
     });
 
     return res;
