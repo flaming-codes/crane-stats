@@ -16,6 +16,8 @@ jobs:
         id: get-msg
         run: |
           echo "{msg}={git log -1 HEAD --pretty=format:%s}" >> $GITHUB_ENV
+      - name: Use correct Node.js version
+        run: nvm use
       - name: Install dependencies
         run: npm i
       - name: Fetch latest & register
