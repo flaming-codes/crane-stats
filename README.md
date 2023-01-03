@@ -4,7 +4,7 @@ Data-repo to hold all aggregated statistics consumed at the [CRAN/E](https://cra
 
 ## Usage
 
-The data is served as a static JSON files at the URLs corresponding to the `data` folder structure. Currently, only Github stars trends are served for various time ranges.
+The data is served as static JSON files at the URLs corresponding to the `data` folder structure. Currently, only Github stars trends are served for various time ranges.
 
 ## Development
 
