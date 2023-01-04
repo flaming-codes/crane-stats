@@ -1,6 +1,18 @@
-# crane-stats
+<br />
+<br />
+<br />
 
-Data-repo to hold all aggregated statistics consumed at the [CRAN/E](https://cran-e.com) PWA. This repo is considered in a very early state and is subject to change.
+<p align="center"><img src="./assets/gh-social.webp" /></p>
+<h2 align="center">
+<a href="https://www.cran-e.com">CRAN/E</a>
+</h2>
+<p align="center">This is a repository to hold all aggregated statistics consumed at the [CRAN/E](https://github.com/flaming-codes/crane-app) PWA. This repo is considered in a very early state and is subject to change.</p>
+
+<br />
+<br />
+<br />
+<br />
+<br />
 
 ## Usage
 
