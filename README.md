@@ -6,7 +6,7 @@
 <h2 align="center">
 <a href="https://www.cran-e.com">CRAN/E</a>
 </h2>
-<p align="center">This is a repository to hold all aggregated statistics consumed at the CRAN/E PWA. This repo is considered in a very early state and is subject to change.</p>
+<p align="center">This repository holds all aggregated statistics consumed by the CRAN/E PWA. This repo is considered in a very early state and is subject to change.</p>
 
 <br />
 <br />
