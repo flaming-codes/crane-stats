@@ -8,8 +8,6 @@ async function run() {
     roundingMethod: 'floor'
   });
 
-  now = parseISO('2023-01-03T22:00:00.000Z');
-
   const providers = [import('./providers/github')];
 
   for await (const { adapter } of providers) {
