@@ -1,14 +1,14 @@
-import { roundToNearestMinutes, parseISO } from 'date-fns';
 import 'dotenv/config';
+import { roundToNearestMinutes } from 'date-fns';
 import { AggregationRange } from './adapters/data/types';
+
+const providers = [import('./providers/github')];
 
 async function run() {
   let now = roundToNearestMinutes(new Date(), {
     nearestTo: 15,
     roundingMethod: 'floor'
   });
-
-  const providers = [import('./providers/github')];
 
   for await (const { adapter } of providers) {
     const record = await adapter.saveSnapshot({ date: now });
