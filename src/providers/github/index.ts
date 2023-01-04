@@ -21,7 +21,7 @@ class GithubDataAdapter extends DataAdapter<DataItem[], TrendDataItem[]> {
 
 const provider = new Provider({ name: 'github' });
 
-const aggregator: Aggregator<DataItem[], TrendDataItem[]> = (latest, past) => {
+const aggregator: Aggregator<DataItem[], TrendDataItem[]> = async (latest, past) => {
   const next: TrendDataItem[] = [];
 
   for (const item of latest) {
@@ -45,6 +45,9 @@ const aggregator: Aggregator<DataItem[], TrendDataItem[]> = (latest, past) => {
   }
 
   next.sort((a, b) => b.trend.stargazers_count - a.trend.stargazers_count);
+
+  for (const item of next) {
+  }
 
   return next;
 };
