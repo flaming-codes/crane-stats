@@ -6,7 +6,7 @@
 <h2 align="center">
 <a href="https://www.cran-e.com">CRAN/E</a>
 </h2>
-<p align="center">This is a repository to hold all aggregated statistics consumed at the [CRAN/E](https://github.com/flaming-codes/crane-app) PWA. This repo is considered in a very early state and is subject to change.</p>
+<p align="center">This is a repository to hold all aggregated statistics consumed at the CRAN/E PWA. This repo is considered in a very early state and is subject to change.</p>
 
 <br />
 <br />
@@ -16,7 +16,7 @@
 
 ## Usage
 
-The data is served as static JSON files at the URLs corresponding to the `data` folder structure. Currently, only Github stars trends are served for various time ranges.
+The data is served as static JSON files at the URLs corresponding to the `data` folder structure. Currently, only Github stars trends are served for various time ranges. The data is consumed by [flaming-codes/crane-app](https://github.com/flaming-codes/crane-app).
 
 ### Snapshots
 
