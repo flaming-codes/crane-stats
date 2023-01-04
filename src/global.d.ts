@@ -3,5 +3,6 @@ declare namespace NodeJS {
     GH_API_KEY: string;
     NODE_ENV: 'development' | 'production';
     SERVER_PORT: string;
+    TA_PKGS_URL: string;
   }
 }
