@@ -5,13 +5,11 @@ const sdk = new Octokit({
 });
 
 export async function getReposByStars(params?: { pushed?: string }) {
-  // const { pushed = format(subDays(new Date(), 1), 'yyyy-MM-dd') } = params || {};
-
   const { data } = await sdk.rest.search.repos({
     q: `language:R`,
     sort: 'stars',
     order: 'desc',
-    per_page: 50
+    per_page: 100
   });
 
   return {

@@ -4,6 +4,7 @@ export type DataRecord<D> = {
 };
 
 export enum AggregationRange {
+  '1h' = '1h',
   '6h' = '6h',
   '12h' = '12h',
   '24h' = '24h',
