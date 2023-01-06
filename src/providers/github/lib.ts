@@ -4,7 +4,7 @@ const sdk = new Octokit({
   auth: process.env.GH_API_KEY
 });
 
-export async function getReposByStars(params?: { pushed?: string }) {
+export async function getReposByStars() {
   const { data } = await sdk.rest.search.repos({
     q: `language:R`,
     sort: 'stars',
@@ -28,4 +28,15 @@ export async function getReposByStars(params?: { pushed?: string }) {
       }
     }))
   };
+}
+
+export async function getUsersByFollowers() {
+  const { data } = await sdk.rest.search.users({
+    q: `language:R`,
+    sort: 'followers',
+    order: 'desc',
+    per_page: 100
+  });
+
+  return data;
 }

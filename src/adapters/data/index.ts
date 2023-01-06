@@ -19,28 +19,31 @@ export class DataAdapter<
   private version: number = 1;
   private baseDir: string;
   private snapshotsDir: string;
+  /** E.g. 'stars'. */
   private aggregatesDir: string;
   /** Get the aggregated entity. */
   private aggregator: Aggregator<D, Dt>;
 
-  constructor(props: { provider: Provider; aggregator: Aggregator<D, Dt>; version?: number }) {
-    const { provider, version, aggregator } = props;
+  constructor(props: {
+    provider: Provider;
+    snapshotsDir: string;
+    aggregatesDir: string;
+    aggregator: Aggregator<D, Dt>;
+    version?: number;
+  }) {
+    const { provider, version, snapshotsDir, aggregatesDir, aggregator } = props;
 
     this.provider = provider;
     this.version = version ?? this.version;
     this.aggregator = aggregator;
 
     this.baseDir = joinDataPath(provider.name);
-    this.snapshotsDir = joinDataPath(provider.name, 'snapshots');
-    this.aggregatesDir = joinDataPath(provider.name, 'trends');
+    this.snapshotsDir = joinDataPath(provider.name, 'snapshots', snapshotsDir);
+    this.aggregatesDir = joinDataPath(provider.name, 'trends', aggregatesDir);
   }
 
   private stringifyDate(date: Date): string {
     return date.toISOString();
-  }
-
-  private parseDate(date: string): Date {
-    return new Date(date);
   }
 
   private composeFilename(date: Date | string, suffix: 'json' | 'gzip'): string {
@@ -73,7 +76,7 @@ export class DataAdapter<
       fs.mkdirSync(this.baseDir);
     }
     if (!fs.existsSync(this.snapshotsDir)) {
-      fs.mkdirSync(this.snapshotsDir);
+      fs.mkdirSync(this.snapshotsDir, { recursive: true });
     }
 
     await writeDataRecord(filepath, {
@@ -100,7 +103,7 @@ export class DataAdapter<
       fs.mkdirSync(this.baseDir);
     }
     if (!fs.existsSync(this.aggregatesDir)) {
-      fs.mkdirSync(this.aggregatesDir);
+      fs.mkdirSync(this.aggregatesDir, { recursive: true });
     }
 
     const snapshotFile = this.composeFilename(mapAggregationRangeToDate(range, date), 'gzip');
@@ -108,7 +111,9 @@ export class DataAdapter<
 
     //  Check if there is a snapshot for the given range.
     if (!files.includes(snapshotFile)) {
-      console.warn(`No snapshot for ${snapshotFile} in range ${range} found.`);
+      console.warn(
+        `No snapshot for ${snapshotFile} in range ${range} in '${this.aggregatesDir}' found.`
+      );
       return;
     }
 
