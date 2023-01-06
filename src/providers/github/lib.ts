@@ -46,6 +46,7 @@ export async function getUsersByFollowers() {
       return {
         ...item,
         name: fullUser.name,
+        bio: fullUser.bio,
         followers: fullUser.followers,
         following: fullUser.following,
         public_repos: fullUser.public_repos
@@ -59,6 +60,7 @@ export async function getUsersByFollowers() {
       id: item.id,
       node_id: item.node_id,
       name: item.name,
+      bio: item.bio,
       login: item.login,
       avatar_url: item.avatar_url,
       html_url: item.html_url,
