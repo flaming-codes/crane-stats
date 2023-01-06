@@ -38,27 +38,20 @@ export async function getUsersByFollowers() {
     per_page: 100
   });
 
-  const fetchCount = async (url: string) => {
-    const res = await fetch(url);
-    const items = await res.json();
-    return items.length;
-  };
-
   const enhancedItems = await Promise.all(
     data.items.map(async (item) => {
-      const [followers, following, repos] = await Promise.all([
-        fetchCount(item.followers_url),
-        fetchCount(item.following_url.replace('{/other_user}', '')),
-        fetchCount(item.repos_url)
-      ]);
+      const { data: fullUser } = await sdk.rest.users.getByUsername({
+        username: item.login
+      });
       return {
         ...item,
-        followers,
-        following,
-        repos
+        followers: fullUser.followers,
+        following: fullUser.following,
+        public_repos: fullUser.public_repos
       };
     })
   );
+
   return {
     data,
     items: enhancedItems.map((item) => ({
@@ -69,7 +62,7 @@ export async function getUsersByFollowers() {
       html_url: item.html_url,
       followers: item.followers,
       following: item.following,
-      repos: item.repos
+      public_repos: item.public_repos
     }))
   };
 }
