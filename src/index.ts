@@ -2,7 +2,10 @@ import 'dotenv/config';
 import { roundToNearestMinutes } from 'date-fns';
 import { AggregationRange } from './adapters/data/types';
 
-const providers = [import('./providers/github')];
+const providers = [
+  import('./providers/github/repos-by-stars'),
+  import('./providers/github/users-by-followers')
+];
 
 async function run() {
   let now = roundToNearestMinutes(new Date(), {
@@ -11,7 +14,7 @@ async function run() {
   });
 
   for await (const { adapter } of providers) {
-    const record = await adapter.saveSnapshot({ date: now });
+    const record: any = await adapter.saveSnapshot({ date: now });
     const ranges = Object.values(AggregationRange);
 
     await Promise.all(
