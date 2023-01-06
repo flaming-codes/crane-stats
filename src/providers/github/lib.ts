@@ -45,6 +45,7 @@ export async function getUsersByFollowers() {
       });
       return {
         ...item,
+        name: fullUser.name,
         followers: fullUser.followers,
         following: fullUser.following,
         public_repos: fullUser.public_repos
@@ -57,6 +58,7 @@ export async function getUsersByFollowers() {
     items: enhancedItems.map((item) => ({
       id: item.id,
       node_id: item.node_id,
+      name: item.name,
       login: item.login,
       avatar_url: item.avatar_url,
       html_url: item.html_url,
