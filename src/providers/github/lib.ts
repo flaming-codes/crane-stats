@@ -38,5 +38,38 @@ export async function getUsersByFollowers() {
     per_page: 100
   });
 
-  return data;
+  const fetchCount = async (url: string) => {
+    const res = await fetch(url);
+    const items = await res.json();
+    return items.length;
+  };
+
+  const enhancedItems = await Promise.all(
+    data.items.map(async (item) => {
+      const [followers, following, repos] = await Promise.all([
+        fetchCount(item.followers_url),
+        fetchCount(item.following_url.replace('{/other_user}', '')),
+        fetchCount(item.repos_url)
+      ]);
+      return {
+        ...item,
+        followers,
+        following,
+        repos
+      };
+    })
+  );
+  return {
+    data,
+    items: enhancedItems.map((item) => ({
+      id: item.id,
+      node_id: item.node_id,
+      login: item.login,
+      avatar_url: item.avatar_url,
+      html_url: item.html_url,
+      followers: item.followers,
+      following: item.following,
+      repos: item.repos
+    }))
+  };
 }
