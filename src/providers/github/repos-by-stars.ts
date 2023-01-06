@@ -49,4 +49,9 @@ const aggregator: Aggregator<DataItem[], TrendDataItem[]> = (latest, past) => {
   return next;
 };
 
-export const adapter = new GithubDataAdapter({ provider, aggregator });
+export const adapter = new GithubDataAdapter({
+  provider,
+  aggregator,
+  snapshotsDir: 'repos-by-stars',
+  aggregatesDir: 'repos-by-stars'
+});
