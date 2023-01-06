@@ -60,9 +60,9 @@ export async function getUsersByFollowers() {
       login: item.login,
       avatar_url: item.avatar_url,
       html_url: item.html_url,
-      followers: item.followers,
-      following: item.following,
-      public_repos: item.public_repos
+      followers: item.followers ?? 0,
+      following: item.following ?? 0,
+      public_repos: item.public_repos ?? 0
     }))
   };
 }
