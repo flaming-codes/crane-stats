@@ -14,9 +14,16 @@
 <br />
 <br />
 
+## Motivation
+
+Certain statistics (like the number of stars for R-code repositories) are available via APIs, but only for a single point in time. This repo therefore offers the following features:
+
+- provide a time-series aspect to statistical data from 3rd party APIs
+- provide general statistics either as aggregation of 3rd party APIs or completely custom ones
+
 ## Usage
 
-The data is served as static JSON files at the URLs corresponding to the `data` folder structure. Currently, only Github stars trends are served for various time ranges. The data is consumed by [flaming-codes/crane-app](https://github.com/flaming-codes/crane-app).
+The data is served as static JSON files at the URLs corresponding to the `data` folder structure and is consumed by [flaming-codes/crane-app](https://github.com/flaming-codes/crane-app).
 
 ### Snapshots
 
@@ -31,7 +38,7 @@ The trends are generated from the snapshots and are stored in the `data/:provide
 The following example shows the Github stars trends for the last 24 hours. Please note that if no data is available for a specific time range, not enough data is yet available to generate the trend.
 
 ```bash
-curl https://raw.githubusercontent.com/flaming-codes/crane-stats/main/data/github/trends/24h.json
+curl https://raw.githubusercontent.com/flaming-codes/crane-stats/main/data/github/trends/repos-by-stars/24h.json
 ```
 
 ## Development
