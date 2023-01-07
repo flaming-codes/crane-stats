@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { roundToNearestMinutes } from 'date-fns';
 import { AggregationRange } from './adapters/data/types';
+import { fetchCraneDataAuthors, fetchCraneDataIdItems } from './crane-data/net';
 
 const providers = [
   import('./providers/github/repos-by-stars'),
@@ -9,7 +10,7 @@ const providers = [
 
 async function run() {
   let now = roundToNearestMinutes(new Date(), {
-    nearestTo: 15,
+    nearestTo: 30,
     roundingMethod: 'floor'
   });
 
