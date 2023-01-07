@@ -16,6 +16,9 @@ jobs:
         run: |
           touch .env
           echo GH_API_KEY=${{ secrets.GH_API_KEY }} >> .env
+          echo CRANE_DATA_API_KEY=${{ secrets.CRANE_DATA_API_KEY }} >> .env
+          echo CRANE_ID_ITEMS_URL=${{ secrets.CRANE_ID_ITEMS_URL }} >> .env
+          echo CRANE_AUTHOR_ITEMS_URL=${{ secrets.CRANE_AUTHOR_ITEMS_URL }} >> .env
       - name: Get last commit message
         id: get-msg
         run: |

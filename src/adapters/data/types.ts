@@ -15,4 +15,4 @@ export enum AggregationRange {
   '1-month' = '1m'
 }
 
-export type Aggregator<D, Dt> = (latest: D, past: D) => Dt;
+export type Aggregator<D, Dt> = (latest: D, past: D) => Dt | Promise<Dt>;
