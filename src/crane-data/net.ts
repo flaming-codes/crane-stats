@@ -9,7 +9,7 @@ let authorItems: Record<string, string[]> = {};
  * @returns
  */
 export async function fetchCraneDataIdItems() {
-  if (!idItems) {
+  if (idItems.length === 0) {
     const url = process.env.CRANE_ID_ITEMS_URL;
     if (!url) {
       throw new Error('CRANE_ID_ITEMS_URL not set');
@@ -22,8 +22,12 @@ export async function fetchCraneDataIdItems() {
   return idItems;
 }
 
+/**
+ *
+ * @returns
+ */
 export async function fetchCraneDataAuthors() {
-  if (!authorItems) {
+  if (Object.keys(authorItems).length === 0) {
     const url = process.env.CRANE_AUTHOR_ITEMS_URL;
     if (!url) {
       throw new Error('CRANE_AUTHOR_ITEMS_URL not set');
@@ -31,9 +35,16 @@ export async function fetchCraneDataAuthors() {
 
     authorItems = await fetcher<typeof authorItems>(url, '');
   }
+
   return authorItems;
 }
 
+/**
+ *
+ * @param href
+ * @param path
+ * @returns
+ */
 const fetcher = async <T>(href: string, path?: string): Promise<T> => {
   // @ts-expect-error 'fetch' not picked up by ts-node.
   return fetch(href + (path || ''), {
@@ -46,8 +57,6 @@ const fetcher = async <T>(href: string, path?: string): Promise<T> => {
     if (res.ok) {
       return res.json();
     }
-
-    console.error('fetcher', res.status, res.statusText, href, path);
 
     return [];
   });

@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import { roundToNearestMinutes } from 'date-fns';
 import { AggregationRange } from './adapters/data/types';
-import { fetchCraneDataAuthors, fetchCraneDataIdItems } from './crane-data/net';
 
 const providers = [
   import('./providers/github/repos-by-stars'),
@@ -18,9 +17,11 @@ async function run() {
     const record: any = await adapter.saveSnapshot({ date: now });
     const ranges = Object.values(AggregationRange);
 
-    await Promise.all(
-      ranges.map((range) => adapter.saveAggregation({ latestRecord: record, date: now, range }))
-    );
+    // Process sequentially so that we can leverage
+    // caches in the adapters.
+    for (const range of ranges) {
+      adapter.saveAggregation({ latestRecord: record, date: now, range });
+    }
   }
 }
 
