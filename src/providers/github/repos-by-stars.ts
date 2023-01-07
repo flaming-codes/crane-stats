@@ -1,5 +1,6 @@
 import { DataAdapter } from '../../adapters/data';
 import { Aggregator } from '../../adapters/data/types';
+import { fetchCraneDataIdItems } from '../../crane-data/net';
 import { Provider } from '../../provider';
 import { getReposByStars } from './lib';
 
@@ -21,7 +22,7 @@ class GithubDataAdapter extends DataAdapter<DataItem[], TrendDataItem[]> {
 
 const provider = new Provider({ name: 'github' });
 
-const aggregator: Aggregator<DataItem[], TrendDataItem[]> = (latest, past) => {
+const aggregator: Aggregator<DataItem[], TrendDataItem[]> = async (latest, past) => {
   const next: TrendDataItem[] = [];
 
   for (const item of latest) {
@@ -46,7 +47,16 @@ const aggregator: Aggregator<DataItem[], TrendDataItem[]> = (latest, past) => {
 
   next.sort((a, b) => b.trend.stargazers_count - a.trend.stargazers_count);
 
-  return next;
+  // Now add CRAN/E metadata.
+  const packageNames = await fetchCraneDataIdItems();
+  return next.map((item) => {
+    const next = { ...item, crane: { packageSlug: '' } };
+    const pkg = packageNames.find((pkg) => pkg.id === item.original.name);
+    if (pkg) {
+      next.crane.packageSlug = pkg.slug;
+    }
+    return next;
+  });
 };
 
 export const adapter = new GithubDataAdapter({

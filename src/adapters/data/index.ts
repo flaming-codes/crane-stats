@@ -120,7 +120,7 @@ export class DataAdapter<
     const snapshotDir = path.join(this.snapshotsDir, snapshotFile);
     const pastRecord = await readDataRecord<D>(snapshotDir);
 
-    const next = this.aggregator(latestRecord, pastRecord.data);
+    const next = await this.aggregator(latestRecord, pastRecord.data);
     const aggregatedRecordDir = path.join(this.aggregatesDir, this.composeFilename(range, 'json'));
     fs.writeFileSync(aggregatedRecordDir, JSON.stringify(next), { encoding: 'utf-8' });
 
