@@ -31,6 +31,8 @@ export async function writeDataRecord<T>(filepath: string, record: DataRecord<T>
 
 export function mapAggregationRangeToDate(range: AggregationRange, date: Date): Date {
   switch (range) {
+    case AggregationRange['1h']:
+      return subHours(date, 1);
     case AggregationRange['6h']:
       return subHours(date, 6);
     case AggregationRange['12h']:
