@@ -20,7 +20,7 @@ async function run() {
     // Process sequentially so that we can leverage
     // caches in the adapters.
     for (const range of ranges) {
-      adapter.saveAggregation({ latestRecord: record, date: now, range });
+      await adapter.saveAggregation({ latestRecord: record, date: now, range });
     }
   }
 }
